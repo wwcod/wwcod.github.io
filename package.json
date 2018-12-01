@@ -10,11 +10,13 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint"
+    "precommit": "npm run lint",
+    "deploy": "gh-pages -d dist -b master"
   },
   "dependencies": {
     "ant-design-vue": "^1.1.9",
     "firebase": "^5.5.9",
+    "gh-pages": "^2.0.1",
     "node-sass": "^4.10.0",
     "nuxt": "^1.0.0",
     "sass-loader": "^7.1.0",
