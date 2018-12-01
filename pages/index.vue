@@ -19,11 +19,11 @@
     <div class="auth__container"
          v-if="!user">
       <img class="github-login"
-           src="/github-icon.svg"
+           src="/github-login.png"
            @click="login" />
     </div>
     <div class="anounce"
-         v-html="me ? '<b>Enter</b> - Chat, <b>T</b> - Toggle Avatar' : 'GitHub로 로그인하세요'"></div>
+         v-html="me ? '<b>Enter</b> - Chat, <b>T</b> - Toggle Avatar (ON/OFF Camera)' : 'Sign in'"></div>
     <video ref="video"
            width="480"
            height="360"></video>
@@ -39,7 +39,7 @@
 import db, { firebase } from '../plugins/db'
 import User from '../components/User.vue'
 
-const faceDetector = new window.FaceDetector({ fastMode: true })
+let faceDetector
 
 export default {
   data: () => ({
@@ -55,6 +55,15 @@ export default {
     users: db.ref('users'),
   }),
   created() {
+    if (window.FaceDetector) {
+      faceDetector = new window.FaceDetector({ fastMode: true })
+    }
+    if (faceDetector) {
+      this.$message.warn(
+        `Go to "chrome://flags/" and enable "Experimental Web Platform features" for face detection API.`,
+        10,
+      )
+    }
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         console.log(user)
@@ -88,12 +97,15 @@ export default {
           message: this.inputText,
         }
         db.ref(`users/${this.uid}/message`).set(this.inputText)
+        db.ref(`messages`)
+          .push()
+          .set(this.inputText)
         this.inputText = ''
       }
     })
     window.addEventListener('keypress', async e => {
       // console.log(e.keyCode)
-      if (e.keyCode !== 116 && e.keyCode !== 12613) return
+      if ((e.keyCode !== 116 && e.keyCode !== 12613) || this.isInputFocus) return
       if (!this.isFace) {
         this.cameraOn()
         this.isFace = true
@@ -205,7 +217,7 @@ export default {
       justify-self: center;
       align-self: center;
       cursor: pointer;
-      width: 60px;
+      /* width: 60px; */
       height: 60px;
     }
   }
