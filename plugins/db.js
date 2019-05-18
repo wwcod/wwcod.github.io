@@ -18,5 +18,6 @@ const firebaseApp = firebase.initializeApp({
 //   }
 // })
 
+
 export { firebase }
 export default firebaseApp.database()
